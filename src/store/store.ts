@@ -10,30 +10,46 @@
 // store는 closure로 관리된다.
 // store parameter를 통해 사용자로 부터 받은 store 설계도를 통해 store를 등록한다.
 // 동시에 store를 통해 나온 것들로 action creator를 만들어 준다.
-function init<T extends any>() {
-  let centerStore: T | null = null;
-  let callbacks: (centerStore: T | null, action?: { type: string; payload: any }) => void;
+function createStore<T>(callback: (store: T, action: { type: string; payload: unknown }) => T) {
+  // 초기화는 init dispatch를 통해 이루어짐.
+  let currentStore: T;
+  const reducer = callback;
 
   // 어디서든 dispatch 이벤트가 일어나면 이곳에서 listen한다.
   // dispatch 이벤트 안에선 store에 접근할 수 있다.
   // dispatch 이벤트 안에선 createStore를 통해 들어온 callback을 실행시킨다.
-  window.addEventListener('dispatch', () => {
+  window.addEventListener('dispatch', (e: Event) => {
     // action은 dispatch 이벤트와 함께 온 것을 읽는다.
-    callbacks(centerStore);
+    currentStore = reducer(currentStore, e.store);
     // callback을 통해 갱신된 store를 특정 이벤트를 통해 방출한다.
+
+    if (e.store.type === 'init') return;
+
+    const publish = new CustomEvent<T>('publish', {
+      detail: currentStore,
+    });
+    dispatchEvent(publish);
   });
 
+  function dispatch({ type, payload }) {
+    const dispatch = new CustomEvent('dispatch');
+    dispatch.store = {
+      type,
+      payload,
+    };
+    dispatchEvent(dispatch);
+  }
+
+  const getStore = () => {
+    return currentStore;
+  };
+
+  dispatch({ type: 'init' });
+  // scope에 접근할 수 있는 dispatch 함수를 제공
   return {
-    createStore: (callback: (centerStore: T, action?: { type: string; payload: any }) => void) => {
-      // 만약 사용자가 store를 2번 만들면 에러!
-      if (centerStore) {
-        throw Error('create Store only once!');
-      }
-      // 실행하면서 store 등록 및 listener 등록, dispatcher까지 만들어서 반환
-      centerStore = callback.arguments[0];
-      callbacks = callback;
-    },
+    dispatch,
+    getStore,
   };
 }
 
-export default init();
+export default createStore;
