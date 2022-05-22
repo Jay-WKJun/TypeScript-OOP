@@ -95,9 +95,10 @@ abstract class Component<T extends PropState, P extends PropState> {
     this.wrapper = document.createDocumentFragment();
     const newTemplate = this.template();
     const rootElement = this.composeComponents(newTemplate);
-    this.wrapper.replaceChildren(rootElement);
+    this.wrapper.appendChild(rootElement);
 
     this.shouldRender = false;
+
     // 최종 결과물은 wrapper에 사용자가 적어준 element들이 합쳐져서 끝난다.
     return this.wrapper;
   };
