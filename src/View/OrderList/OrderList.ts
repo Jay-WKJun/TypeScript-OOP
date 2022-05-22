@@ -1,4 +1,5 @@
 import OrderRow from '@/View/OrderList/OrderRow/OrderRow';
+import NewOrderRow from '@/View/OrderList/OrderRow/NewOrderRow';
 
 import OrderController from '@/Controller/OrderController';
 
@@ -16,9 +17,9 @@ class OrderList {
       const drink = this.orderController.addDrink();
 
       const newRowNumber = this.orderTable.children.length;
-      const newOrderRow = new OrderRow(newRowNumber, drink);
+      //const newOrderRow = new OrderRow(newRowNumber, drink);
 
-      this.orderTable.appendChild(newOrderRow.render());
+      this.orderTable.appendChild(new NewOrderRow().render({ id: 1, drink }));
     });
   };
 }
