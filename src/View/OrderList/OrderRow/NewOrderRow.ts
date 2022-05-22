@@ -9,9 +9,13 @@ type OrderRowProps = {
   drink: Drink;
 };
 
-class NewOrderRow extends Component<any, OrderRowProps> {
+type OrderRowState = {
+  isEditable: boolean;
+};
+
+class NewOrderRow extends Component<OrderRowState, OrderRowProps> {
   constructor() {
-    super(undefined, undefined);
+    super({ isEditable: false }, undefined);
   }
 
   template: () => Template = () => {
@@ -28,14 +32,14 @@ class NewOrderRow extends Component<any, OrderRowProps> {
     const title = new OrderCell().render({
       content: newDrink.getName(),
       title: newDrink.getName(),
-      isEditable: true,
+      isEditable: false,
     });
     const options = newDrink.getOptions().map(option => new OrderCell().render({
       content: option.name,
       title: option.getSelectedOption(),
-      isEditable: true,
+      isEditable: this.localState.isEditable,
     }));
-    const updateButton = new OrderCellButton().render({ type: 'update', onClick: () => console.log('update') });
+    const updateButton = new OrderCellButton().render({ type: 'update', onClick: () => this.setState((prev) => ({ ...prev, isEditable: !prev.isEditable })) });
     const deleteButton = new OrderCellButton().render({ type: 'delete', onClick: () => console.log('delete') });
 
     return {
