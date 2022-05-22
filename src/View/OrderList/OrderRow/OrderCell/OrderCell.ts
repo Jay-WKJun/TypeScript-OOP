@@ -17,8 +17,10 @@ class OrderCell extends Component<any, OrderCellProps> {
 
     if (!this.props?.isEditable) {
       cellWrapper.removeAttribute('editable');
+      cellWrapper.removeAttribute('contenteditable');
     } else {
       cellWrapper.setAttribute('editable', '');
+      cellWrapper.setAttribute('contenteditable', 'true');
     }
 
     if (this.props) {
