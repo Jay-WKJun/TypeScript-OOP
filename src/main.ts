@@ -1,4 +1,5 @@
-import '@/View/OrderList/OrderList';
+//import '@/View/OrderList/OrderList';
+import '@/View/OrderList/NewOrderList';
 import '@/View/Kitchen/Kitchen';
 
 let currentElement: HTMLButtonElement | null = null;
